@@ -1,0 +1,29 @@
+package rules
+import com.binod.DroolsComplexRule.Store;
+import com.binod.DroolsComplexRule.Resutado;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+rule "Offer for Paytm"
+salience 3
+no-loop
+	when
+		 $result: Resutado()
+		 $store: Store($state: state)
+		 $tests: HashMap()
+		 from accumulate( $test : Store(  $state == state ),
+		    init( HashMap<String, ArrayList<Store>> tests = new HashMap<String, ArrayList<Store>>(); ),
+		    action(
+		        if (tests.get($state) == null) tests.put($state, new ArrayList()); 
+		        tests.get($state).add($test);
+		    ),
+		    reverse(
+		    System.out.println("teste<<<<<<<<<<<<<<<<<<<<<<<<"); 
+		    	tests.get($state).remove($test);
+		    ),
+		    result( tests )
+		 )
+	then
+		$result.setResultado($tests);
+		System.out.println("Encontrado mais de duas linhas de movimentação do caixa" + $tests);
+	end
